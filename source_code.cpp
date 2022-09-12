@@ -115,18 +115,18 @@ F = BringWhite
 */
 
 int tempBoard[D][D] = {
-    {5, 4, 1,    3, 2, 7,    9, 6, 8},
-    {8, 6, 2,    4, 1, 9,    7, 3, 5},
-    {3, 9, 7,    8, 5, 6,    4, 2, 1},
+    {5, 4, 1, 3, 2, 7, 9, 6, 8},
+    {8, 6, 2, 4, 1, 9, 7, 3, 5},
+    {3, 9, 7, 8, 5, 6, 4, 2, 1},
 
-    {2, 7, 8,    9, 4, 3,    5, 1, 6},
-    {4, 1, 6,    5, 8, 2,    3, 9, 7},
-    {9, 3, 5,    6, 7, 1,    2, 8, 4},
-    
-    {1, 2, 4,    7, 3, 8,    6, 5, 9},
-    {6, 5, 3,    1, 9, 4,    8, 7, 2},
-    {7, 8, 9,    2, 6, 5,    1, 4, 3},
-    };
+    {2, 7, 8, 9, 4, 3, 5, 1, 6},
+    {4, 1, 6, 5, 8, 2, 3, 9, 7},
+    {9, 3, 5, 6, 7, 1, 2, 8, 4},
+
+    {1, 2, 4, 7, 3, 8, 6, 5, 9},
+    {6, 5, 3, 1, 9, 4, 8, 7, 2},
+    {7, 8, 9, 2, 6, 5, 1, 4, 3},
+};
 
 void setConsoleColor(int textColor, int bgColor)
 {
@@ -256,7 +256,11 @@ bool User::showChoices(void)
 void User::saveData(void)
 {
     ofstream f("user.dat", ios::app);
-    f.write((char *)this, sizeof(*this));
+    f.write((char *)&rightEnteries, sizeof(rightEnteries));
+    f.write((char *)&totalEnteries, sizeof(totalEnteries));
+    f.write((char *)&name, sizeof(name));
+    f.write((char *)&level, sizeof(level));
+    f.write((char *)&t1, sizeof(t1));
     f.close();
 }
 
@@ -274,14 +278,25 @@ bool User::react_on(int c)
 {
     if (c == 1)
     {
-        ifstream r1("user.dat", ios::binary);
+        ifstream r1("user.dat");
         cout << "---------------------------------------------------------------------------------------------------------------------\n";
         cout << "Sr\t\tName\t\t\tLevel\t\tAchieved Score\tTotal Score\tTime Elapsed\n";
         cout << "---------------------------------------------------------------------------------------------------------------------\n";
         int i = 1;
-        while (r1.read((char *)this, sizeof(*this)))
+        User u1;
+        string tempName = "";
+        while (!r1.eof())
         {
+            r1.read((char *)&rightEnteries, sizeof(rightEnteries));
+            r1.read((char *)&totalEnteries, sizeof(totalEnteries));
+            r1.read((char *)&name, sizeof(name));
+            r1.read((char *)&level, sizeof(level));
+            r1.read((char *)&t1, sizeof(t1));
+            if (name == tempName)
+                break;
             cout << i << "\t\t" << name << "\t\t\t" << level << "\t\t" << rightEnteries * 5 << "\t\t" << totalEnteries * 5 << "\t\t" << t1 << "\n";
+
+            tempName = name;
             i++;
         }
         cout << "---------------------------------------------------------------------------------------------------------------------\n";
